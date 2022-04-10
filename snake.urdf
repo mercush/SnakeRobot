@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+
+<robot xmlns="http://drake.mit.edu"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ name="BallBot">
+
+  <link name="ground">
+    <visual>
+      <origin xyz="0 0 -5" rpy="0 0 0" />
+      <geometry>
+        <box size="1000 1000 10" />
+      </geometry>
+      <material>
+        <color rgba="0.93 .74 .4 1" />
+      </material>
+    </visual>
+  </link>
+
+  <joint name="ground_weld" type="fixed">
+    <parent link="world" />
+    <child link="ground" />
+  </joint>
+
+  <link name="ball">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="5" />
+      <inertia ixx=".02" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.02" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <sphere radius=".1" />
+      </geometry>
+      <material>
+        <color rgba="0.25 0.52 0.96 1" />
+      </material>
+    </visual>
+  </link>
+
+  <link name="bot">
+    <inertial>
+      <origin xyz="0 0 .05" rpy="0 0 0" />
+      <mass value="4" />
+      <inertia ixx="0.018" ixy="0" ixz="0" iyy="0.018" iyz="0" izz="0.0288" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 .05" rpy="0 0 0" />
+      <geometry>
+         <cylinder length=".1" radius=".12" />
+      </geometry>
+      <material>
+        <color rgba=".61 .63 .67 1" />
+      </material>
+    </visual>
+  </link>
+  
+  <joint name="x" type="prismatic">
+    <parent link="world" />
+    <child link="ball" />
+    <origin xyz="0 0 .1" />
+    <axis xyz="1 0 0" />
+    <dynamics damping="0.1" />
+  </joint>
+
+  <joint name="theta" type="continuous">
+    <parent link="ball" />
+    <child link="bot" />
+    <origin xyz="0 0 0" />
+    <axis xyz="0 1 0" />
+    <dynamics damping="0.1" />
+  </joint>
+
+  <transmission type="SimpleTransmission" name="ball_torque">
+    <actuator name="torque" />
+    <joint name="theta" />
+    <mechanicalReduction>1</mechanicalReduction>
+  </transmission>
+
+  <transmission type="SimpleTransmission" name="ball_force">
+    <actuator name="force" />
+    <joint name="x" />
+    <mechanicalReduction>.1</mechanicalReduction>
+  </transmission>
+</robot>
